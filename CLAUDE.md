@@ -77,5 +77,5 @@ git push                    # Push umbrella
 - OpenCV 4.10.0: `C:\opencv\opencv\build`
 - vcpkg: `C:\vcpkg` (libusb-1.0, pthreads4w)
 - libuvc: `C:\libuvc`
-- TrackingSvc: `C:\Program Files\Ultraleap\TrackingService\bin\`
-- Tracking SDK: `C:\Program Files\Ultraleap\LeapSDK\`
+- TrackingSvc: `C:\Program Files\OpticMix\TrackingService\bin\`
+- Tracking SDK: `C:\Program Files\OpticMix\LeapSDK\`
