@@ -1,4 +1,4 @@
-# Deploy edge components (DLL + Streamer) to LeapSvc
+# Deploy edge components (DLL + Streamer) to TrackingSvc
 # Must run as Administrator
 # Usage: powershell -File scripts/deploy.ps1
 

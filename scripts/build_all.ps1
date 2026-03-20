@@ -4,7 +4,7 @@
 
 param(
     [switch]$EdgeOnly,
-    [switch]$TouchFreeOnly
+    [switch]$AeroMixOnly
 )
 
 $ErrorActionPreference = "Stop"
@@ -20,20 +20,20 @@ function Build-Edge {
     }
 }
 
-function Build-TouchFree {
-    Write-Host "`n=== Building TouchFree Service ===" -ForegroundColor Cyan
+function Build-AeroMix {
+    Write-Host "`n=== Building AeroMix Service ===" -ForegroundColor Cyan
     $csproj = Join-Path $root "touchfree\TF_Service_dotNet\TouchFree_Service\TouchFree_Service.csproj"
     if (Test-Path $csproj) {
         dotnet build -c Release $csproj
     } else {
-        Write-Host "[SKIP] TouchFree csproj not found" -ForegroundColor Yellow
+        Write-Host "[SKIP] AeroMix csproj not found" -ForegroundColor Yellow
     }
 }
 
 if ($EdgeOnly) { Build-Edge; return }
-if ($TouchFreeOnly) { Build-TouchFree; return }
+if ($AeroMixOnly) { Build-AeroMix; return }
 
 Build-Edge
-Build-TouchFree
+Build-AeroMix
 
 Write-Host "`n=== Build Complete ===" -ForegroundColor Green

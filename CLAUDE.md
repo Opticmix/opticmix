@@ -10,8 +10,8 @@
 opticmix/
 ├── edge/          → Opticmix/opticmix-edge      (DLL, streamer, protocol, deploy)
 ├── tracker/       → Opticmix/opticmix-tracker    (AOT model loader, custom tracker)
-├── touchfree/     → Opticmix/opticmix-touchfree  (TouchFree service, UI, overlay)
-├── re-docs/       → Opticmix/ultraleap-re-docs   (RE analysis documents)
+├── touchfree/     → Opticmix/opticmix-touchfree  (AeroMix service, UI, overlay)
+├── re-docs/       → Opticmix/opticmix-re-docs     (RE analysis documents)
 ├── claude-skills/ → Opticmix/claude-skills        (Claude Code custom skills)
 └── scripts/       ← Unified build/deploy scripts
 ```
@@ -30,8 +30,8 @@ powershell -File scripts/build_all.ps1
 # Edge only (DLL + Streamer)
 powershell -File scripts/build_all.ps1 -EdgeOnly
 
-# TouchFree only
-powershell -File scripts/build_all.ps1 -TouchFreeOnly
+# AeroMix only
+powershell -File scripts/build_all.ps1 -AeroMixOnly
 
 # Deploy (admin required)
 powershell -File scripts/deploy.ps1
@@ -44,7 +44,7 @@ For component-specific build instructions, see CLAUDE.md in each submodule.
 
 ## Architecture
 
-**Goal**: Edge computing hand tracking — mini-PC captures IR camera via USB, streams frames over TCP to desktop where LeapSvc processes them.
+**Goal**: Edge computing hand tracking — mini-PC captures IR camera via USB, streams frames over TCP to desktop where TrackingSvc processes them.
 
 ```
 미니PC (카메라)                      데스크탑 (서버)
@@ -52,7 +52,7 @@ For component-specific build instructions, see CLAUDE.md in each submodule.
 │ IR-170 (USB) │                    │ 교체 librealuvc.dll   │
 │ libuvc캡처   │──TCP 프레임──────→│  NetworkUvcDevice     │
 │ (WinUSB+XU)  │←─TCP XU 명령────→│  NetworkPropertyDriver│
-└──────────────┘                    │       ↓ LeapSvc.exe   │
+└──────────────┘                    │       ↓ TrackingSvc    │
                                     └───────────────────────┘
 ```
 
@@ -77,5 +77,5 @@ git push                    # Push umbrella
 - OpenCV 4.10.0: `C:\opencv\opencv\build`
 - vcpkg: `C:\vcpkg` (libusb-1.0, pthreads4w)
 - libuvc: `C:\libuvc`
-- LeapSvc: `C:\Program Files\Ultraleap\TrackingService\bin\`
-- LeapC SDK: `C:\Program Files\Ultraleap\LeapSDK\`
+- TrackingSvc: `C:\Program Files\Ultraleap\TrackingService\bin\`
+- Tracking SDK: `C:\Program Files\Ultraleap\LeapSDK\`
