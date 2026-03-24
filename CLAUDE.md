@@ -72,6 +72,10 @@ git commit -m "chore: Update edge submodule"
 git push                    # Push umbrella
 ```
 
+## Debugging Rules
+
+- **원본 소스 대조**: Visualizer/프로젝션 등에서 문제가 발생하면 반드시 원본 소스(Ultraleap LeapC + TrackingSvc 모드에서 동작하던 코드)와 비교 검토할 것. 원본에서 작동하던 로직을 기준으로 OpticMixC 모드의 차이점을 분석한다.
+
 ## External Dependencies
 
 - OpenCV 4.10.0: `C:\opencv\opencv\build`

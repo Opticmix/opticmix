@@ -6,7 +6,7 @@
 	url = https://github.com/Opticmix/opticmix-tracker.git
 [submodule "re-docs"]
 	path = re-docs
-	url = https://github.com/Opticmix/ultraleap-re-docs.git
+	url = https://github.com/Opticmix/opticmix-re-docs.git
 [submodule "claude-skills"]
 	path = claude-skills
 	url = https://github.com/Opticmix/claude-skills.git
