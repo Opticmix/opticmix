@@ -13,3 +13,7 @@ build/
 node_modules/
 bin/
 obj/
+
+# Allow installer assets (tracked via Git LFS)
+!installer/assets/*.dll
+!installer/assets/*.exe
