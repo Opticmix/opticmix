@@ -7,11 +7,10 @@
 #define MyAppURL "https://opticmix.com"
 
 ; Source directories — adjust these paths for your build environment
-#define TrackingSvcDir "C:\Program Files\Ultraleap\TrackingService\bin"
-#define LeapSDKDir    "C:\Program Files\Ultraleap\LeapSDK\lib\x64"
+#define TrackingSvcDir "C:\Program Files\OpticMix\TrackingService\bin"
+#define LeapSDKDir    "C:\Program Files\OpticMix\LeapSDK\lib\x64"
 #define TrayBuildDir  "..\edge\tools\tray\bin\Release\net8.0-windows\win-x64\publish"
-#define EdgeDllDir    "..\edge\build\dll\Release"
-#define EdgeStreamerDir "..\edge\build\streamer\Release"
+#define AssetsDir     "assets"
 #define AeroMixSvcDir  "..\aeromix\TF_Service_dotNet\TouchFree_Service\bin\Release\net10.0"
 #define CursorOverlayDir "..\aeromix\CursorOverlay\bin\Release\net8.0-windows"
 
@@ -46,7 +45,7 @@ Name: "pro"; Description: "Pro (엣지컴퓨팅 + 멀티센서)"
 Name: "core"; Description: "OpticMix Tracking Engine"; Types: basic pro; Flags: fixed
 Name: "tray"; Description: "OpticMix Tray (시스템 트레이 앱)"; Types: basic pro; Flags: fixed
 Name: "aeromix"; Description: "AeroMix (에어 커서 오버레이)"; Types: basic pro
-Name: "pro"; Description: "Pro — 네트워크 DLL + Streamer"; Types: pro
+Name: "pro"; Description: "Pro — 네트워크 모드 (엣지 컴퓨팅)"; Types: pro
 
 [Files]
 ; === Core: Tracking Service ===
@@ -66,14 +65,12 @@ Source: "{#TrackingSvcDir}\ldat-*.ldat"; DestDir: "{app}\TrackingService\bin"; C
 ; Firmware
 Source: "{#TrackingSvcDir}\firmware\*"; DestDir: "{app}\TrackingService\bin\firmware"; Components: core; Flags: ignoreversion recursesubdirs
 
-; Basic: original librealuvc.dll (direct USB)
-Source: "{#TrackingSvcDir}\librealuvc.dll"; DestDir: "{app}\TrackingService\bin"; Components: core; Flags: ignoreversion; Check: not IsComponentSelected('pro')
-; Also save original for Pro rollback
-Source: "{#TrackingSvcDir}\librealuvc.dll"; DestDir: "{app}\TrackingService\bin"; DestName: "librealuvc.dll.orig"; Components: pro; Flags: ignoreversion
-
-; === Pro: Network DLL + Streamer ===
-Source: "{#EdgeDllDir}\librealuvc.dll"; DestDir: "{app}\TrackingService\bin"; Components: pro; Flags: ignoreversion
-Source: "{#EdgeStreamerDir}\leap_streamer.exe"; DestDir: "{app}\TrackingService\bin"; Components: pro; Flags: ignoreversion
+; Both DLLs always deployed (enables mode switching without reinstall)
+Source: "{#AssetsDir}\librealuvc_local.dll"; DestDir: "{app}\TrackingService\bin"; Components: core; Flags: ignoreversion
+Source: "{#AssetsDir}\librealuvc_net.dll"; DestDir: "{app}\TrackingService\bin"; DestName: "librealuvc_net.dll"; Components: core; Flags: ignoreversion
+; Active DLL: copy the right one based on install type
+Source: "{#AssetsDir}\librealuvc_local.dll"; DestDir: "{app}\TrackingService\bin"; DestName: "librealuvc.dll"; Components: core; Flags: ignoreversion; Check: not IsComponentSelected('pro')
+Source: "{#AssetsDir}\librealuvc_net.dll"; DestDir: "{app}\TrackingService\bin"; DestName: "librealuvc.dll"; Components: pro; Flags: ignoreversion
 
 ; === AeroMix Service ===
 Source: "{#AeroMixSvcDir}\AeroMix_Service.exe"; DestDir: "{app}\AeroMix\Service"; Components: aeromix; Flags: ignoreversion
@@ -125,8 +122,6 @@ Filename: "{sys}\sc.exe"; Parameters: "stop LeapService"; Flags: runhidden waitu
 Filename: "{sys}\sc.exe"; Parameters: "config LeapService start= disabled"; Flags: runhidden waituntilterminated; StatusMsg: "Disabling Ultraleap service..."
 Filename: "{sys}\sc.exe"; Parameters: "create OpticMixTracking binPath= ""{app}\TrackingService\bin\LeapSvc.exe --bg"" start= auto DisplayName= ""OpticMix Tracking Service"""; Flags: runhidden waituntilterminated; StatusMsg: "Registering OpticMix service..."
 Filename: "{sys}\sc.exe"; Parameters: "start OpticMixTracking"; Flags: runhidden waituntilterminated; StatusMsg: "Starting OpticMix service..."
-; Pro: add firewall rule
-Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""OpticMix Streamer"" dir=in action=allow program=""{app}\TrackingService\bin\leap_streamer.exe"" protocol=TCP"; Components: pro; Flags: runhidden waituntilterminated; StatusMsg: "Adding firewall rule..."
 ; Launch tray app (tray manages AeroMix child processes)
 Filename: "{app}\Tray\OpticMixTray.exe"; Description: "OpticMix 시작"; Flags: nowait postinstall skipifsilent
 
@@ -134,8 +129,6 @@ Filename: "{app}\Tray\OpticMixTray.exe"; Description: "OpticMix 시작"; Flags: 
 ; Stop and delete service
 Filename: "{sys}\sc.exe"; Parameters: "stop OpticMixTracking"; Flags: runhidden waituntilterminated
 Filename: "{sys}\sc.exe"; Parameters: "delete OpticMixTracking"; Flags: runhidden waituntilterminated
-; Remove firewall rule
-Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall delete rule name=""OpticMix Streamer"""; Flags: runhidden waituntilterminated
 ; Kill AeroMix processes
 Filename: "{cmd}"; Parameters: "/C taskkill /F /IM CursorOverlay.exe"; Flags: runhidden waituntilterminated
 Filename: "{cmd}"; Parameters: "/C taskkill /F /IM AeroMix_Service.exe"; Flags: runhidden waituntilterminated
