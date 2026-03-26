@@ -10,7 +10,7 @@
 opticmix/
 ├── edge/          → Opticmix/opticmix-edge      (DLL, streamer, protocol, deploy)
 ├── tracker/       → Opticmix/opticmix-tracker    (AOT model loader, custom tracker)
-├── touchfree/     → Opticmix/opticmix-touchfree  (AeroMix service, UI, overlay)
+├── aeromix/       → Opticmix/opticmix-aeromix    (AeroMix service, CursorOverlay client)
 ├── re-docs/       → Opticmix/opticmix-re-docs     (RE analysis documents)
 ├── claude-skills/ → Opticmix/claude-skills        (Claude Code custom skills)
 └── scripts/       ← Unified build/deploy scripts
@@ -44,16 +44,19 @@ For component-specific build instructions, see CLAUDE.md in each submodule.
 
 ## Architecture
 
-**Goal**: Edge computing hand tracking — mini-PC captures IR camera via USB, streams frames over TCP to desktop where TrackingSvc processes them.
+**Goal**: Edge computing hand tracking — client (mini-PC) captures IR camera via USB, streams frames over TCP to server (desktop) where TrackingSvc processes them.
 
 ```
-미니PC (카메라)                      데스크탑 (서버)
-┌──────────────┐                    ┌───────────────────────┐
-│ IR-170 (USB) │                    │ 교체 librealuvc.dll   │
-│ libuvc캡처   │──TCP 프레임──────→│  NetworkUvcDevice     │
-│ (WinUSB+XU)  │←─TCP XU 명령────→│  NetworkPropertyDriver│
-└──────────────┘                    │       ↓ TrackingSvc    │
-                                    └───────────────────────┘
+Client (미니PC)                      Server (데스크탑)
+┌──────────────────┐                ┌───────────────────────┐
+│ IR-170 (USB)     │                │ 교체 librealuvc.dll   │
+│ Streamer ────────│──TCP 7100────→│  NetworkUvcDevice     │
+│                  │←─TCP 7101───→│  NetworkPropertyDriver│
+│ CursorOverlay    │                │       ↓ TrackingSvc    │
+│ (tray+overlay)   │←─WS 9739────│  AeroMix (0.0.0.0)    │
+│   ↓ 커서 표시    │                └───────────────────────┘
+│ [모니터]         │
+└──────────────────┘
 ```
 
 ## Submodule Workflow
