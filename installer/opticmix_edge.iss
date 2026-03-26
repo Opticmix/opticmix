@@ -39,11 +39,8 @@ Source: "{#AssetsDir}\libusb-1.0.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#AssetsDir}\pthreadVC3.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; WinUSB installer tool (libwdi)
 Source: "{#AssetsDir}\wdi-simple.exe"; DestDir: "{app}"; Flags: ignoreversion skipifsourcedoesntexist
-; CursorOverlay (.NET 8.0 framework-dependent)
-Source: "{#OverlayDir}\CursorOverlay.exe"; DestDir: "{app}\Overlay"; Flags: ignoreversion
-Source: "{#OverlayDir}\CursorOverlay.dll"; DestDir: "{app}\Overlay"; Flags: ignoreversion
-Source: "{#OverlayDir}\CursorOverlay.deps.json"; DestDir: "{app}\Overlay"; Flags: ignoreversion
-Source: "{#OverlayDir}\CursorOverlay.runtimeconfig.json"; DestDir: "{app}\Overlay"; Flags: ignoreversion
+; CursorOverlay (self-contained .NET 8.0)
+Source: "{#OverlayDir}\*"; DestDir: "{app}\Overlay"; Flags: ignoreversion recursesubdirs
 
 [Icons]
 Name: "{group}\OpticMix Streamer"; Filename: "{app}\leap_streamer.exe"
